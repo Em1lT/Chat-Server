@@ -1,2 +1,2 @@
 # Chat-Server
-Firsy project/ and test how github works
+First project/ and to test how github works
