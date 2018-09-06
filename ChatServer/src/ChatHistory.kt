@@ -33,5 +33,17 @@ object ChatHistory: ChatHistoryobservable{
         observers.remove(observer)
         println("removed observer")
     }
+    fun colors(num : Int = 8): String {
+
+        when(num){
+            1 -> return "\u001B[44m" //Blue
+            2 -> return "\u001B[41m" // Red
+            3 -> return "\u001B[46m" //Cyan
+            4 -> return "\u001B[43m" //Yellow
+            5 -> return "\u001B[45m" // Purple
+            else -> return "\u001B[40m"// Black
+        }
+        return "\u001B[40m"
+    }
 
 }

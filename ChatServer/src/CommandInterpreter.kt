@@ -1,3 +1,4 @@
+import java.awt.Color
 import java.io.InputStream
 import java.io.PrintStream
 import java.net.Socket
@@ -6,13 +7,12 @@ import java.util.*
 
 class CommandInterpreter(var client: Socket):Runnable, ChatHistoryObserver{
 
-    override fun newMessage(message: ChatMessage) {
-       writer.println(message)
-    }
     var chatHistory = ChatHistory
     var users = Users
     val reader: Scanner = Scanner(client.getInputStream())
     val writer = PrintStream(client.getOutputStream(), true)
+    val rnd = Random()
+    val num = rnd.nextInt(5)
 
     override fun run() {
         chatHistory.registerObserver(CommandInterpreter(client))
@@ -25,7 +25,7 @@ class CommandInterpreter(var client: Socket):Runnable, ChatHistoryObserver{
             var com = reader.nextLine()
             if (com != null) {
                 if(com.equals("") || com.equals(" ")){
-                    writer.println("error. nothing is written")
+                    writer.println("${chatHistory.colors(2)}error. nothing is written ${chatHistory.colors()}")
                 }
                 else if (com.contains(":user ")) {
                     name = com.replaceBefore(" ", "")
@@ -53,13 +53,13 @@ class CommandInterpreter(var client: Socket):Runnable, ChatHistoryObserver{
                     listCommands()
                 } else if (com.contains(":")) {
 
-                    writer.println("Did not get command $com")
+                    writer.println("${chatHistory.colors(2)}Did not get command $com${chatHistory.colors()}")
                 }else {
                     if(users.user){
                         chatHistory.addMsg(ChatMessage(com, name))
                     }
                     else{
-                        writer.println("Login to send message")
+                        writer.println("${chatHistory.colors(2)}Login to send message${chatHistory.colors()}")
                     }
 
                 }
@@ -69,13 +69,18 @@ class CommandInterpreter(var client: Socket):Runnable, ChatHistoryObserver{
         }
     fun listCommands(){
 
-        writer.println("Commands:")
+        writer.println("${chatHistory.colors(1)}Commands:")
         writer.println("\":user yourName\"... creates a user")
         writer.println("\":users\"... List users in the server")
         writer.println("\":messages\"... to see messages")
         writer.println("\":quit\"... to quit")
-        writer.println("if you are logged in you can type your message freely")
+        writer.println("if you are logged in you can type your message freely${chatHistory.colors()}")
     }
+
+    override fun newMessage(message: ChatMessage) {
+        writer.println("${chatHistory.colors(num)}$message ${chatHistory.colors(7)}")
+    }
+
     }
 
 
