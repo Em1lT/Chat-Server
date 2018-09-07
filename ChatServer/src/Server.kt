@@ -3,7 +3,7 @@ import kotlin.concurrent.thread
 
 class Server(){
 
-
+    var num = 0
 
     fun start() {
 
@@ -14,7 +14,8 @@ class Server(){
         while (true){
             var client = server.accept()//waits till client is connected to the server
             println("Client connected: ${client.inetAddress.hostAddress}")
-            thread { CommandInterpreter(client).run()}//threaded commandInterpreter that handles the terminal commands
+            num++
+            thread { CommandInterpreter(client, num).run()}//threaded commandInterpreter that handles the terminal commands
     }
     }
 

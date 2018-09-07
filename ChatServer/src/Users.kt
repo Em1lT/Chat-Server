@@ -7,14 +7,13 @@ object Users{
     var user = false
 
 
-    fun insertUser(name: String): String{
+    fun insertUser(name: String): Boolean{
 
         if (!nameList.contains(name)){
             nameList.add(name)
-            user = true
-            return "Username$name created"
+            return true
         }else{
-            return "User already created"
+           return false
         }
 
     }
@@ -23,13 +22,9 @@ object Users{
         return nameList.contains(name)
 
     }
-    fun deleteUser(name: String)
-    {
-        if (nameList.contains(name)){
+    fun deleteUser(name: String){
+
             nameList.remove(name)
-    }else{
-            println("no name found in the list")
-        }
     }
 
 }
