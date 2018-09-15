@@ -1,35 +1,36 @@
-import java.awt.Color
-import java.io.InputStream
 import java.io.PrintStream
 import java.net.Socket
-import java.nio.charset.Charset
 import java.util.*
 
+/*
+Emil Toivainen
+1706854
+CommandInterpreter
+ */
 class CommandInterpreter(var client: Socket, var num: Int):Runnable, ChatHistoryObserver{
 
-    var chatHistory = ChatHistory
-    var users = Users
-    val reader: Scanner = Scanner(client.getInputStream())
-    val writer = PrintStream(client.getOutputStream(), true)
+    private var chatHistory = ChatHistory
+    private val users = Users
+    private val reader: Scanner = Scanner(client.getInputStream())
+    private val output = PrintStream(client.getOutputStream(), true)
 
 
     override fun run() {
 
 
-        writer.println("${chatHistory.colors(num)}Welcome!, press :help for all of the commands")
+        output.println("${chatHistory.colors(num)}Welcome!, press :help for all of the commands")
         var on = true
         var name = ""
-        var name2 = ""
         var loggedIn = false
 
         while (on == true) {
-
+            //this part takes the commands and and decides what they are doing
             var com = reader.nextLine()
             if (com != null) {
                 if(com.equals("") || com.equals(" ")){
-                    writer.println("error. nothing is written")
+                    output.println("error. nothing is written")// if enter is pressed without anything it wil print an error
                 }
-                else if (com.contains(":user ")) {
+                else if (com.contains(":user ")) {  //this creates the user. You cannot change the user when you are once created it
                     name = com.replaceBefore(" ", "")
 
                     if(loggedIn == false){
@@ -38,46 +39,42 @@ class CommandInterpreter(var client: Socket, var num: Int):Runnable, ChatHistory
                             chatHistory.registerObserver(CommandInterpreter(client, num))
                             chatHistory.addMsg(ChatMessage("Username created ", name, num))
                         }else{
-                            writer.println("Username already in use")
+                            output.println("Username already in use")
                         }
                     }else{
-                        writer.println("Cannot change username")
+                        output.println("Cannot change username")
                     }
-                }/* else if(com.contains("@")) {
-                    name2 = com.replaceBeforeLast(" ", "")
-                    writer.println("Sending private message to$name2")
-                    chatHistory.addprivatMsg(ChatMessage(com.replaceAfterLast("@", ""), name, num))
-
-*/
+                }
                  else if (com == ":history") {
                     for (items in chatHistory.myMutableList){
-                        writer.println("$items")
+                        output.println("$items")
                     }
 
                 } else if (com == ":users") {
+
                    for (names in users.nameList){
-                       writer.println(names)
+                       output.println(names)
                    }
 
-                } else if (com == ":quit") {
-                    writer.println("Goodbye")
+                } else if (com == ":quit" || loggedIn == true) {
+                    output.println("Goodbye")
                     chatHistory.addMsg(ChatMessage("left", name, num))
                     users.deleteUser(name)
                     chatHistory.deregisterObserver(CommandInterpreter(client, num))
 
                     on = false
-                }else if(com == ":help"){
+                } else if(com == ":help"){
 
                     listCommands()
                 } else if (com.contains(":")) {
 
-                    writer.println("Did not get command $com")
+                    output.println("Did not get command $com")
                 }else {
                     if(loggedIn){
                         chatHistory.addMsg(ChatMessage(com, name, num))
                     }
                     else{
-                        writer.println("Login to send message")
+                        output.println("Login to send message")
                     }
 
                 }
@@ -87,16 +84,16 @@ class CommandInterpreter(var client: Socket, var num: Int):Runnable, ChatHistory
         }
     fun listCommands(){
 
-        writer.println("Commands:")
-        writer.println("\":user yourName\"... creates a user")
-        writer.println("\":users\"... List users in the server")
-        writer.println("\":history\"... to see messages")
-        writer.println("\":quit\"... to quit")
-        writer.println("if you are logged in you can type your message freely ${chatHistory.colors(num)}")
+        output.println("Commands:")
+        output.println("\":user yourName\"... creates a user")
+        output.println("\":users\"... List users in the server")
+        output.println("\":history\"... to see messages")
+        output.println("\":quit\"... to quit")
+        output.println("if you are logged in you can type your message freely ${chatHistory.colors(num)}")
     }
 
     override fun newMessage(message: ChatMessage) {
-            writer.println("${chatHistory.colors(message.num)} $message ${chatHistory.colors(num)}")
+            output.println("${chatHistory.colors(message.num)} $message ${chatHistory.colors(num)}")
 
     }
 

@@ -1,5 +1,9 @@
 
-
+/*
+Emil Toivainen
+1706854
+ChatServer
+ */
 object Users{
 
     //var set = HashSet<String>()

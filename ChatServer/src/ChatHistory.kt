@@ -1,14 +1,18 @@
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
-
+/*
+Emil Toivainen
+1706854
+ChatHistory. Color of the command line is decided here in the function "colors"
+ */
 object ChatHistory: ChatHistoryobservable{
 
     val myMutableList = mutableListOf<String>()
-    val observers = mutableSetOf<ChatHistoryObserver>()
-    val current = LocalDateTime.now()
-    val formatter = DateTimeFormatter.ofPattern("HH:mm:ss")
-    val chatConsole = ChatConsole()
-    var topChatter = TopChatter()
+    private val observers = mutableSetOf<ChatHistoryObserver>()
+    private val current = LocalDateTime.now()
+    private val formatter = DateTimeFormatter.ofPattern("HH:mm:ss")!!
+    private val chatConsole = ChatConsole()
+    val topChatter = TopChatter()
 
     fun addMsg(message : ChatMessage){
         val time = current.format(formatter)
